@@ -1,0 +1,85 @@
+<html>
+   <head>
+      <meta charset="UTF-8">
+      <title>Machine learning in JS</title>
+      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+      <script src="https://www.lactame.com/lib/ml/4.0.0/ml.min.js"></script>
+   </head>
+   <body>
+     <h1 style="text-align:center">Simple Machine learning program in js</h1> 
+     <input type="text" id="feature" placeholder="Enter the age of the employee">
+     <button onclick="predict()">predict</button>
+     <button onclick="summary()">summary</button>
+    <div>
+        <h1 id="result"></h1>
+    </div>
+    <pre id="summary"></pre>
+    <div id="visualizer" style="width:600px;height:450px;margin:auto"></div>
+
+      
+     <script>
+         
+       let trainedModel; 
+       let x;
+       let y; 
+       const resultEl = document.getElementById('result');
+       const featureEl = document.getElementById('feature');
+       const summaryEl = document.getElementById('summary');
+       const visualizerEl = document.getElementById('visualizer');
+
+       function loadDataSets(){ 
+         x =  [21, 32, 62, 72, 84];
+         y = [24000, 48000, 83000, 61000, 52000]
+        }
+
+       function train(){
+         console.log('x',x);
+         console.log('y', y)
+         trainedModel = new ML.SimpleLinearRegression(x, y);
+       }
+ 
+       function summary(){
+         summaryEl.innerText = JSON.stringify(trainedModel.toJSON())
+         plot();
+       }
+
+       function predict(){
+        const result = trainedModel.predict(parseInt(featureEl.value, 10));
+        resultEl.innerText = 'SALARY OF THE EMPLOYEE IS: ' + result;
+       }
+
+       function plot(){
+        
+        const slopeX = [Math.min(...x), Math.max(...x)];
+        const slopeY = [trainedModel.predict(Math.min(...x)), trainedModel.predict(Math.max(...x))];
+ 
+        Plotly.newPlot( visualizerEl, [
+           {
+             x: x,
+             y: y,
+            mode: 'markers',
+            type: 'scatter'
+           },
+            {
+             x: slopeX,
+             y: slopeY,
+            mode: 'lines',
+            type: 'scatter'
+           }],
+          {
+
+          title: 'Age and Salary',
+          scale: 1 
+        });
+
+       }
+      
+       document.addEventListener('DOMContentLoaded', (event) => {
+        loadDataSets();    
+        train();
+      });
+           
+      </script>
+
+   </body>
+</html>
